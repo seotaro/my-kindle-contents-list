@@ -19,5 +19,5 @@ yarn install
 ## run
 
 ```bash
-node index.js $HOME/Library/Application Support/Kindle/Cache/KindleSyncMetadataCache.xml
+node index.js "$HOME/Library/Application Support/Kindle/Cache/KindleSyncMetadataCache.xml"
 ```
