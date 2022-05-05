@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 
 // Amazon.co.jp から商品の価格を取得する。
+// 商品ページが存在しない商品は￥0で返す。
 exports.getPrice = async (ASIN) => {
   const url = `https://www.amazon.co.jp/dp/${ASIN}`;
 
@@ -11,13 +12,13 @@ exports.getPrice = async (ASIN) => {
       return page.$('#kindle-price')
     })
     .then((element) => {
-      return element.getProperty('textContent');
+      return element ? element.getProperty('textContent') : null;
     })
     .then((property) => {
-      return property.jsonValue();
+      return property ? property.jsonValue() : null;
     })
     .then((value) => {
-      return Number(value.replaceAll(/[ ,￥]/g, ''));
+      return value ? Number(value.replaceAll(/[ ,￥]/g, '')) : 0;
     })
     .finally(() => {
       browser.close();
