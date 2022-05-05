@@ -1,4 +1,8 @@
-const puppeteer = require('puppeteer');
+const puppeteerExtra = require('puppeteer-extra');
+const pluginStealth = require('puppeteer-extra-plugin-stealth');
+const randomUseragent = require('random-useragent');
+
+puppeteerExtra.use(pluginStealth());
 
 module.exports = class AmazonScraper {
   constructor() {
@@ -7,7 +11,7 @@ module.exports = class AmazonScraper {
   }
 
   initialize() {
-    return puppeteer.launch()
+    return puppeteerExtra.launch()
       .then((browser) => {
         this.browser = browser;
         return browser.newPage();
@@ -28,7 +32,12 @@ module.exports = class AmazonScraper {
   getPrice(ASIN) {
     const url = `https://www.amazon.co.jp/dp/${ASIN}`;
 
-    return this.page.goto(url)
+    const userAgent = randomUseragent.getRandom()
+
+    return this.page.setUserAgent(userAgent)
+      .then(() => {
+        return this.page.goto(url)
+      })
       .then(() => {
         return this.page.$('#kindle-price')
       })
