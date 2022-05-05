@@ -3,9 +3,18 @@
 const xml2js = require('xml2js');
 const fs = require('fs').promises;
 const { Parser } = require('json2csv');
+const path = require('path');
 const { getPrice } = require('./scraping');
 
-const PATH = '/Users/seotaro/Library/Application Support/Kindle/Cache/KindleSyncMetadataCache.xml';
+// 引数チェック
+if (process.argv.length !== 3) {
+  const basename = path.basename(process.argv[1]);
+
+  console.error(`Usage: node ${basename} KindleSyncMetadataCache.xml`);
+  process.exit(1);
+}
+
+const PATH = process.argv[2];
 
 (async () => {
   const json = await fs.readFile(PATH)
