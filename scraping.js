@@ -11,7 +11,7 @@ module.exports = class AmazonScraper {
   }
 
   initialize() {
-    return puppeteerExtra.launch()
+    return puppeteerExtra.launch({ headless: false, defaultViewport: null })
       .then((browser) => {
         this.browser = browser;
         return browser.newPage();
@@ -36,7 +36,10 @@ module.exports = class AmazonScraper {
 
     return this.page.setUserAgent(userAgent)
       .then(() => {
-        return this.page.goto(url)
+        return this.page.setDefaultNavigationTimeout(0);
+      })
+      .then(() => {
+        return this.page.goto(url, { waitUntil: 'networkidle2', })
       })
       .then(() => {
         return this.page.$('#kindle-price')
