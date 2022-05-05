@@ -4,7 +4,7 @@ const xml2js = require('xml2js');
 const fs = require('fs').promises;
 const { Parser } = require('json2csv');
 const path = require('path');
-const { getPrice } = require('./scraping');
+const AmazonScraper = require('./scraping');
 
 // 引数チェック
 if (process.argv.length !== 3) {
@@ -29,10 +29,14 @@ const PATH = process.argv[2];
     return
   }
 
+  const scrapter = new AmazonScraper();
+  await scrapter.initialize();
+
+  // 順番に取得していく。
   const result = [];
   for (const meta_data of json.response.add_update_list.meta_data) {
     try {
-      const price = await getPrice(meta_data.ASIN)
+      const price = await scrapter.getPrice(meta_data.ASIN)
       result.push({
         ASIN: meta_data.ASIN
         , title: meta_data.title._
@@ -46,10 +50,11 @@ const PATH = process.argv[2];
     }
   }
 
+  await scrapter.exit();
+
   const fields = ['ASIN', 'title', 'purchaseDate', 'price'];
   const opts = { fields };
   const parser = new Parser(opts);
   const csv = parser.parse(result);
-
   await fs.writeFile('output.csv', csv);
 })();
