@@ -6,14 +6,21 @@ exports.getPrice = async (ASIN) => {
 
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
-  await page.goto(url);
-
-  const element = await page.$('#kindle-price');
-  const price = (await (await element.getProperty('textContent')).jsonValue()).replaceAll(/[ ,￥]/g, '');
-
-  await browser.close();
-
-  return Number(price);
+  return page.goto(url)
+    .then(() => {
+      return page.$('#kindle-price')
+    })
+    .then((element) => {
+      return element.getProperty('textContent');
+    })
+    .then((property) => {
+      return property.jsonValue();
+    })
+    .then((value) => {
+      return Number(value.replaceAll(/[ ,￥]/g, ''));
+    })
+    .finally(() => {
+      browser.close();
+    })
 }
 
