@@ -4,7 +4,7 @@ const randomUseragent = require('random-useragent');
 
 puppeteerExtra.use(pluginStealth());
 
-module.exports = class AmazonScraper {
+module.exports = class PuppeteerService {
   constructor() {
     this.browser = null;
     this.page = null;
