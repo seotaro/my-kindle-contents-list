@@ -35,18 +35,24 @@ const PATH = process.argv[2];
   // 順番に取得していく。
   const result = [];
   for (const meta_data of json.response.add_update_list.meta_data) {
-    try {
-      const price = await puppeteer.getAmazonPrice(meta_data.ASIN)
-      result.push({
-        ASIN: meta_data.ASIN
-        , title: meta_data.title._
-        , purchaseDate: new Date(meta_data.purchase_date)
-        , price
-      });
-      console.log(meta_data.ASIN, price)
+    let retryCount = 3;
+    while (0 < retryCount) {
+      try {
+        const price = await puppeteer.getAmazonPrice(meta_data.ASIN)
+        result.push({
+          ASIN: meta_data.ASIN
+          , title: meta_data.title._
+          , purchaseDate: new Date(meta_data.purchase_date)
+          , price
+        });
 
-    } catch (err) {
-      console.error(meta_data.ASIN, err)
+        retryCount = 0;
+        console.log(meta_data.ASIN, price)
+
+      } catch (err) {
+        retryCount--;
+        console.error(meta_data.ASIN, err);
+      }
     }
   }
 

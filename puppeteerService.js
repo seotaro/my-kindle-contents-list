@@ -45,13 +45,17 @@ module.exports = class PuppeteerService {
         return this.page.$('#kindle-price')
       })
       .then((element) => {
-        return element ? element.getProperty('textContent') : null;
+        if (!element) {
+          throw new Error('#kindle-price does not exist');
+        }
+
+        return element.getProperty('textContent');
       })
       .then((property) => {
-        return property ? property.jsonValue() : null;
+        return property.jsonValue();
       })
       .then((value) => {
-        return value ? Number(value.replaceAll(/[ ,￥]/g, '')) : 0;
+        return Number(value.replaceAll(/[ ,￥]/g, ''));
       })
   }
 }
