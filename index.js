@@ -36,7 +36,7 @@ const PATH = process.argv[2];
   const result = [];
   for (const meta_data of json.response.add_update_list.meta_data) {
     try {
-      const price = await scrapter.getPrice(meta_data.ASIN)
+      const price = await scrapter.getAmazonPrice(meta_data.ASIN)
       result.push({
         ASIN: meta_data.ASIN
         , title: meta_data.title._
